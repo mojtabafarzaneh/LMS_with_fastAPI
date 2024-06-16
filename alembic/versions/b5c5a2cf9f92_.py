@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: f021072aa427
+Revision ID: b5c5a2cf9f92
 Revises:
-Create Date: 2024-06-15 21:50:07.150348
+Create Date: 2024-06-16 18:09:15.533846
 
 """
 import json
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'f021072aa427'
+revision: str = 'b5c5a2cf9f92'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,16 +26,16 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('role', sa.Integer(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
 
     with open(os.path.join(os.path.dirname(__file__), "../data/students.json")) as f:
-        studant_data = f.read()
+        student_data = f.read()
 
-    op.bulk_insert(users, json.loads(studant_data))
-
+    op.bulk_insert(users, json.loads(student_data))
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     op.create_table('courses',
@@ -54,7 +54,6 @@ def upgrade() -> None:
     sa.Column('first_name', sa.String(length=50), nullable=False),
     sa.Column('last_name', sa.String(length=50), nullable=False),
     sa.Column('bio', sa.Text(), nullable=True),
-    sa.Column('is_avtive', sa.Boolean(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
