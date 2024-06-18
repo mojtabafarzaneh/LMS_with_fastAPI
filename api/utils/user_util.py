@@ -1,10 +1,7 @@
-
-import email
-
 from sqlalchemy.orm import Session
 
 from db.models.user import User
-from pydanti_schemas.user import UserCreate
+from pydanti_schemas.user_schemas import UserCreate
 
 
 def get_user(db: Session, user_id: int):
@@ -21,8 +18,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: UserCreate):
     db_user = User(email=user.email, role=user.role) # type: ignore
+    db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
-
-
