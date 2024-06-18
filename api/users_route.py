@@ -1,11 +1,13 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from httpx import get
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from api.utils.user_util import (create_user, get_user, get_user_by_email,
-                                 get_users)
-from db.db_setup import get_db
+from api.utils.user_util import (create_user, get_async_user, get_user,
+                                 get_user_by_email, get_users)
+from db.db_setup import get_async_db, get_db
 from pydanti_schemas.user_schemas import User, UserCreate
 
 router = APIRouter()
@@ -24,13 +26,12 @@ async def create_new_user(user: UserCreate, db: Session=Depends(get_db)):
     raise HTTPException(status_code=400, detail="user already exists")
   return create_user(db=db, user=user)
 
-
-@router.get("/users/{user_id}")
-async def read_user(id: int, db: Session=Depends(get_db)):
-  db_user =get_user(db=db, user_id=id)
-  if db_user is None:
-    raise HTTPException(status_code=404, detail="user not found")
-  return db_user
+@router.get("/users/{user_id}", response_model=User)
+async def read_user(user_id: int, db: AsyncSession = Depends(get_async_db)):
+    db_user = await get_async_user(db=db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
 
 
 
