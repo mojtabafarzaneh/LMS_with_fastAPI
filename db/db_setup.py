@@ -7,7 +7,7 @@ SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://postgres:mojtaba7878@localhost/
 
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={}, future=True
+    SQLALCHEMY_DATABASE_URL, connect_args={}, future=True # type: ignore
 )
 SessionLocal = sessionmaker(
     autocommit=False,
